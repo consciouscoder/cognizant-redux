@@ -71,19 +71,19 @@ render() {
     };
 
     return (
-        <BrowserRouter>
-            <div>
-                <div className="linksDiv">
-                    <Link to="/">Time Machine</Link> | {' '}
-                    <Link to="/3day">3-Day</Link> | {' '}
-                    <Link to="/7day">7-Day</Link>
+            <BrowserRouter>
+                <div>
+                    <div className="linksDiv">
+                        <Link to="/">Time Machine</Link> | {' '}
+                        <Link to="/3day">3-Day</Link> | {' '}
+                        <Link to="/7day">7-Day</Link>
 
-                    <Route exact path="/" component={TimeMachine} />
-                    <Route path="/3day" component={ThreeDayForecast} />
-                    <Route path="/7day" component={SevenDayForecast} />
+                        <Route exact path="/" component={TimeMachine} />
+                        <Route path="/3day" component={ThreeDayForecast} />
+                        <Route path="/7day" component={SevenDayForecast} />
+                    </div>
                 </div>
-            </div>
-        </BrowserRouter>
+            </BrowserRouter>
     );
   }
 }

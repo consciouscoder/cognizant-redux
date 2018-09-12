@@ -1,6 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { StatefulToolTip } from 'react-portal-tooltip';
+import { connect } from 'react-redux';
 
 // TempLayout - Functional Component (stateless)
 // -- Formats the layout of current temperature, high/low temperature and summary.
@@ -53,17 +54,30 @@ const TempLayout = props => {
     );
 };
 
-export default TempLayout;
+const mapStateToProps = (state, props) => ({
+        temperature: state.temperature,
+        tempHigh: state.tempHigh,
+        tempLow: state.tempLow,
+        tempHighTime: state.tempHighTime,
+        tempLowTime: state.tempLowTime,
+        summary: state.summary,
+        precipProbability: state.precipProbability,
+        precipType: state.precipType,
+        humidity: state.humidity,
+        uvIndex: state.uvIndex
+});
 
-TempLayout.propTypes = {
-    temperature: PropTypes.number,
-    tempHigh: PropTypes.number,
-    tempLow: PropTypes.number,
-    tempHighTime: PropTypes.string,
-    tempLowTime: PropTypes.string,
-    precipProbability: PropTypes.number,
-    precipType: PropTypes.string,
-    humidity: PropTypes.number,
-    uvIndex: PropTypes.number,
-    summary: PropTypes.string
-};
+export default connect(mapStateToProps)(TempLayout);
+
+// TempLayout.propTypes = {
+//     temperature: PropTypes.number,
+//     tempHigh: PropTypes.number,
+//     tempLow: PropTypes.number,
+//     tempHighTime: PropTypes.string,
+//     tempLowTime: PropTypes.string,
+//     precipProbability: PropTypes.number,
+//     precipType: PropTypes.string,
+//     humidity: PropTypes.number,
+//     uvIndex: PropTypes.number,
+//     summary: PropTypes.string
+// };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Icons from './Icons';
 import TempLayout from './TempLayout';
@@ -12,7 +13,7 @@ import './WeatherBlock.css';
 //                        latLong - (string) Latitude and longitude to retrieve the weather data for
 //                        forecastDay - (number) # of Days in future to forecast (leave blank for Time Machine)
 //
-export default class WeatherBlock extends React.Component {
+class WeatherBlock extends React.Component {
   state = {
     dsDataCurrent: [],
     dsDataDaily: [],
@@ -33,7 +34,7 @@ export default class WeatherBlock extends React.Component {
 
   // getDarkSkyAPI - Function to request data from the DarkSky API - param date is optional
   //               - with date param is for Time Machine - without date will default to current or weather forecast
-  getDarkSkyAPI = date => {
+  getDarkSkyAPI = (date) => {
         // 2f59170b5a75d855ff4dbbcfa4c498e0 -- dan@ -- API key
         // 0c7f10d0d5fa0d8602b3c9664767e7f7 -- dladendorf@ -- backup API key
         // http://cors-anywhere.dan.earth:8080/ -- main CORS proxy
@@ -59,6 +60,7 @@ export default class WeatherBlock extends React.Component {
                 const dsData = response.data;
 
                 if (forecastDay) { // 3 or 7-Day Forecast
+
                     this.setState({ 
                         skyIcon: dsData.daily.data[forecastDay].icon,
                         summary: dsData.daily.data[forecastDay].summary.substring(0, 39),
@@ -75,19 +77,36 @@ export default class WeatherBlock extends React.Component {
                         timeMachineDate: this.toTextTime(dsData.daily.data[forecastDay].time),
                         backgroundColor: this.getColor(Math.round(dsData.daily.data[forecastDay].temperatureHigh))
                     });
+
+                    this.setState({ 
+                        skyIcon: dsData.daily.data[forecastDay].icon,
+                        summary: dsData.daily.data[forecastDay].summary.substring(0, 39),
+                        doneLoading: true, 
+                        timeMachineDate: this.toTextTime(dsData.daily.data[forecastDay].time),
+                        backgroundColor: this.getColor(Math.round(dsData.daily.data[forecastDay].temperatureHigh))
+                    });
+
                 } else { // Time Machine
+
+                    this.props.dispatch({    
+                        type: "UPDATE_WEATHER",
+                        payload: {
+                            temperature: Math.round(dsData.daily.data[0].temperatureHigh),
+                            tempHigh: Math.round(dsData.daily.data[0].temperatureHigh),
+                            tempLow: Math.round(dsData.daily.data[0].temperatureLow),
+                            tempHighTime: this.toTextTimeHours(dsData.daily.data[0].apparentTemperatureHighTime),
+                            tempLowTime: this.toTextTimeHours(dsData.daily.data[0].apparentTemperatureLowTime),
+                            precipProbability: Math.round(dsData.daily.data[0].precipProbability * 100),
+                            precipType: dsData.daily.data[0].precipType,
+                            humidity: Math.round(dsData.daily.data[0].humidity * 200),
+                            uvIndex: dsData.daily.data[0].uvIndex,
+                            summary: dsData.daily.data[0].summary.substring(0, 39),
+                        }
+                    });
+
                     this.setState({ 
                         skyIcon: dsData.currently.icon,
                         summary: dsData.currently.summary,
-                        temperature: Math.round(dsData.currently.temperature),
-                        tempHigh: Math.round(dsData.daily.data[0].temperatureHigh),
-                        tempLow: Math.round(dsData.daily.data[0].temperatureLow),
-                        tempHighTime: this.toTextTimeHours(dsData.daily.data[0].temperatureHighTime),
-                        tempLowTime: this.toTextTimeHours(dsData.daily.data[0].temperatureLowTime),
-                        precipProbability: Math.round(dsData.daily.data[0].precipProbability * 100),
-                        precipType: dsData.daily.data[0].precipType,
-                        humidity: Math.round(dsData.daily.data[0].humidity * 100),
-                        uvIndex: dsData.daily.data[0].uvIndex,
                         doneLoading: true,
                         backgroundColor: this.getColor(Math.round(dsData.currently.temperature))
                     });
@@ -142,9 +161,11 @@ export default class WeatherBlock extends React.Component {
   }
 
   render() {
-    
+
     const { temperature, tempHigh, tempLow, tempHighTime, tempLowTime, summary, skyIcon, timeMachineDate, doneLoading,
             precipProbability, precipType, humidity, uvIndex } = this.state;
+
+    const forecastDay = this.props.forecastDay;
 
     let bgColorStyle = {
         backgroundColor: this.state.backgroundColor
@@ -171,6 +192,7 @@ export default class WeatherBlock extends React.Component {
                                 humidity={humidity}
                                 uvIndex={uvIndex}
                                 summary={summary}
+                                forecastDay={forecastDay}
 
                     />
             </div>
@@ -187,6 +209,8 @@ export default class WeatherBlock extends React.Component {
     );
   }
 }
+
+export default connect()(WeatherBlock);
 
 WeatherBlock.propTypes = {
     forecastDay: PropTypes.number,

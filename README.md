@@ -1,5 +1,5 @@
 ![alt text](http://cognizant.dan.earth/images/weatherblock_screen1.png "WeatherBlock")
-# WeatherBlock - A minimalist DarkSky weather component 
+# WeatherBlock - A minimalist DarkSky weather component w/ Redux
 ### http://cognizant.dan.earth
 
 WeatherBlock was created as a technical challenge for Cognizant.
